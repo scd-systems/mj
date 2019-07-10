@@ -1,0 +1,16 @@
+MAINTAINER charlie
+NAME traefik-jail
+VERSION 2019
+
+REPO latest
+INSTALL traefik
+ZFSPOOL JAILS
+RUN sysrc syslogd_flags="-ss"
+RUN sysrc sendmail_enable="NONE"
+RUN sysrc sendmail_submit_enable="NO"
+RUN sysrc sendmail_outbound_enable="NO"
+RUN sysrc sendmail_msp_queue_enable="NO"
+RUN sysrc syslogd_enable="YES"
+RUN sysrc traefik_enable="YES"
+RUN sysrc traefik_user="root"
+COPY traefik.toml /usr/local/etc/traefik.toml

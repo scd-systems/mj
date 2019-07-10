@@ -1,0 +1,55 @@
+# debug = true
+logLevel = "INFO"
+insecureSkipVerify = true
+
+[traefikLog]
+  filePath = "/var/log/traefik.log"
+  format = "common"
+
+[accessLog]
+  filePath = "/var/log/traefik_access.log"
+  format = "common"
+
+[api]
+  entryPoint = "traefik"
+  dashboard = false
+
+[ping]
+  entryPoint = "traefik"
+
+defaultEntryPoints = ["http", "https"]
+
+[entryPoints]
+  [entryPoints.http]
+    address = "127.0.10.100:80"
+    [entryPoints.http.redirect]
+      entryPoint = "https"
+
+[acme]
+email = "info@foo.bar"
+storage = "/usr/local/etc/acme.json"
+# caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
+caServer = "https://acme-v02.api.letsencrypt.org/directory"
+entryPoint = "https"
+KeyType = "RSA4096"
+  [acme.httpChallenge]
+    entryPoint = "http"
+
+[[acme.domains]]
+  main = "www.foo.bar"
+  sans = ["srv1.foo.bar"]
+
+[file]
+watch = true
+[backends]
+  [backends.srv1]
+    [backends.srv1.servers.server1]
+      url = "https://127.0.10.10:8080"
+
+[frontends]
+  [frontends.srv1]
+    backend = "srv1"
+    entrypoints = ["https"]
+    passHostHeader = true
+    [frontends.srv1.routes.web]
+      rule = "Host:srv1.foo.bar"
